@@ -1,0 +1,24 @@
+<CustomButton@Button>:
+    icon_source: ""  # Properti untuk ikon
+    is_nav: False  # Apakah tombol bagian navigasi
+    background_normal: ""  # Hilangkan background default
+    background_color: 0, 0, 0, 0  # Transparan agar hanya background parent yang terlihat
+    color: 0,0,0,1
+    size_hint_y: None
+    height: dp(50)  
+    font_size: "14sp" if self.is_nav else "16sp"
+
+    canvas.before:
+        Color:
+            rgba: (1, 1, 1, 1)  # Warna latar tombol (merah)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [30, 30, 30, 30]  # Membuat sudut membulat
+       
+<ImageButton@ButtonBehavior+Image>:
+    size_hint: None, None
+    size: dp(50), dp(50)
+    allow_stretch: True
+    keep_ratio: True
+    pos_hint: {"center_y": 0.5}

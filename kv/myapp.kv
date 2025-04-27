@@ -1,0 +1,1508 @@
+#:include custom_widgets.kv
+
+<FileChooserPopup>:
+    size_hint: 0.9, 0.9
+    auto_dismiss: False
+    on_pre_open: root.set_filter()
+    BoxLayout:
+        orientation: "vertical"
+
+        FileChooserListView:
+            id: file_chooser
+            
+            size_hint_y: 0.8
+        BoxLayout:
+            size_hint_y: None
+            height: '48dp'
+            spacing: dp(10)
+
+            Button:
+                text: "Pilih"
+                size_hint_y: 0.8
+                on_release: root.on_select()
+            Button:
+                text: "Batal"
+                size_hint_y: 0.8
+                on_release: root.dismiss()
+
+
+<MessagePopup@Popup>:
+    title: "Pesan"
+    size_hint: 0.80, 0.4
+    auto_dismiss: False
+    BoxLayout:
+        orientation: "vertical"
+        padding: 10
+        spacing: 10
+
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+
+            Label:
+                id: message_label
+                text: ""
+                text_size: self.width, None
+                size_hint_y: None
+                height: self.texture_size[1]
+                halign: "left"
+                valign: "top"
+                color: 1, 1, 1, 1  # warna putih
+                markup: True
+
+        Button:
+            text: "Tutup"
+            size_hint_y: None
+            height: dp(40)
+            on_release: root.dismiss()
+
+ScreenManager:
+    SplashScreen:
+    MainScreen:
+    InstructionScreen:
+    EncryptScreen:
+    DecryptScreen:
+    TransferScreen:
+    SenderScreen:
+    ReceiverScreen:
+
+<SplashScreen>:
+    name: "splash"
+    BoxLayout:
+        orientation: "vertical"
+        canvas.before:
+            Color:
+                rgba: (0.137, 0.514, 0.557, 1)  # Warna background
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        Widget:  # Spacer agar gambar tidak terlalu ke atas
+            size_hint_y: 0.4
+
+        Image:
+            source: 'assets/logo.png'
+            size_hint: None, None
+            width: min(self.parent.width * 0.5, dp(230))  # Lebih kecil, max 180 dp
+            height: self.width  # Proporsional
+            allow_stretch: True
+            keep_ratio: True
+            pos_hint: {"center_x": 0.5}
+
+        Widget:  # Spacer agar gambar tetap di tengah
+            size_hint_y: 0.5
+
+<MainScreen>:
+    name: "main"
+    BoxLayout:
+        orientation: "vertical"
+        spacing: dp(26)
+        canvas.before:
+            Color:
+                rgba: (0.137, 0.514, 0.557, 1)  # Warna latar belakang biru
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        
+        Widget:
+            size_hint_y: 0.5
+
+        BoxLayout:
+            orientation: "vertical"
+            size_hint_y: None
+            height: dp(200) if app.screen_ratio > 1.8 else dp(250)  # Sesuaikan tinggi layout
+            pos_hint: {"center_x": 0.5, "center_y": 0.6}
+            spacing: dp(25)
+        # Logo
+            Widget:  # Spacer untuk mendorong tombol ke atas
+                size_hint_y: 0.7
+            Image:
+                source: 'assets/logo.png'
+                size_hint_y: None
+                height: dp(120)
+                
+            BoxLayout:
+                orientation: "horizontal"
+                pos_hint: {"center_x": 0.5}
+                size: dp(250), dp(60)
+                size_hint: None, None
+                padding: dp (10)
+                canvas.before:
+                    Color:
+                        rgba: 1, 1, 1, 1
+                    RoundedRectangle:
+                        pos:self.pos
+                        size:self.size
+                        radius: [30, 30, 30, 30 ]
+                
+                Image:
+                    source: "assets/intruksi.png"
+                    size_hint: None, None
+                    size: dp(30), dp(30)
+                    width:dp(50)
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5} 
+                    allow_stretch: True
+                    keep_ratio: True
+
+                CustomButton:
+                    text: "Petunjuk Aplikasi"
+                    font_name:"FontText"
+                    bold: True
+                    font_size: "20sp"
+                    halign: "center"
+                    height: dp(30)
+                    width:dp(160)
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}  # Tambahkan center_y agar berada di tengah layar
+                    size_hint_x: None
+                    on_press: root.manager.current = 'instruction'
+
+            BoxLayout:
+                orientation: "horizontal"
+                pos_hint: {"center_x": 0.5}
+                size: dp(250), dp(60)
+                size_hint: None, None
+                padding: dp (10)
+                canvas.before:
+                    Color:
+                        rgba: 1, 1, 1, 1
+                    RoundedRectangle:
+                        pos:self.pos
+                        size:self.size
+                        radius: [30, 30, 30, 30 ]
+                
+                Image:
+                    source: "assets/enkripsi.png"
+                    size_hint: None, None
+                    size: dp(30), dp(30)
+                    width:dp(50)
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5} 
+                    allow_stretch: True
+                    keep_ratio: True
+
+                CustomButton:
+                    text: "Enkripsi"
+                    font_name:"FontText"
+                    bold: True
+                    font_size: "20sp"
+                    halign: "center"
+                    height: dp(30)
+                    width:dp(160)
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}  # Tambahkan center_y agar berada di tengah layar
+                    size_hint_x: None
+                    on_press: root.manager.current = 'encrypt'
+
+            BoxLayout:
+                orientation: "horizontal"
+                pos_hint: {"center_x": 0.5}
+                size: dp(250), dp(60)
+                size_hint: None, None
+                padding: dp (10)
+                canvas.before:
+                    Color:
+                        rgba: 1, 1, 1, 1
+                    RoundedRectangle:
+                        pos:self.pos
+                        size:self.size
+                        radius: [30, 30, 30, 30 ]
+                
+                Image:
+                    source: "assets/dekripsi.png"
+                    size_hint: None, None
+                    size: dp(30), dp(30)
+                    width:dp(50)
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5} 
+                    allow_stretch: True
+                    keep_ratio: True
+
+                CustomButton:
+                    text: "Dekripsi"
+                    font_size: "20sp"
+                    font_name:"FontText"
+                    bold: True
+                    halign: "center"
+                    height: dp(30)
+                    width:dp(160)
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}  # Tambahkan center_y agar berada di tengah layar
+                    size_hint_x: None
+                    on_press: root.manager.current = 'decrypt'
+        Widget:
+            size_hint_y: 0.3
+        # Navbar Bawah
+        BoxLayout:
+            size_hint_y: None
+            height: dp(70)
+            pos_hint: {"x": 0, "bottom": 1}  # Navbar tetap di bawah
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [30, 30, 0, 0]
+        # Bagian Home (Ikon + Button)
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_x: 0.5  # Lebar mengikuti ukuran elemen
+                spacing: dp(5)  # Jarak antar widget
+                pos_hint: {"center_y": 0.5}  # Posisikan di tengah navbar
+
+                canvas.before:
+                    Color:
+                        rgba: 1, 1, 1, 1  # Warna merah untuk background ikon dan tombol
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [30, 30, 30, 30]
+                    
+
+                ImageButton:
+                    source: "assets/IconHome.png"
+                    size_hint: None, None
+                    size: dp(25), dp(25)
+                    allow_stretch: True
+                    keep_ratio: True
+                    pos_hint: {"center_x": 0.5}  # Menengahkan ikon dalam BoxLayout
+                    on_press: root.manager.current = 'main'
+                Label:
+                    text: "Home"
+                    font_size:"12sp"
+                    color: 0 , 0 , 0 , 1
+                    size_hint: None, None
+                    size: dp(80), dp(20)  # Sesuaikan ukuran tombol
+                    pos_hint: {"center_x": 0.5}  # Posisikan di tengah
+
+        # Bagian Transfer (Ikon + Button)
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_x: 0.5 # Lebar mengikuti ukuran elemen
+                spacing: dp(5)  # Jarak antar widget
+                pos_hint: {"center_y": 0.5}  # Posisikan di tengah navbar
+
+                canvas.before:
+                    Color:
+                        rgba: 1, 1, 1, 1  # Warna merah untuk background ikon dan tombol
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [30, 30, 30, 30]
+
+                ImageButton:
+                    source: "assets/transfer.png"
+                    size_hint: None, None
+                    size: dp(25), dp(25)
+                    allow_stretch: True
+                    keep_ratio: True
+                    pos_hint: {"center_x": 0.5}  # Menengahkan ikon dalam BoxLayout
+                    on_press: root.manager.current = 'transfer'
+
+                Label:
+                    text: "Transfer"
+                    font_size:"12sp"
+                    color: 0 , 0 , 0 , 1
+                    size_hint: None, None
+                    size: dp(80), dp(20)  # Sesuaikan ukuran tombol
+                    pos_hint: {"center_x": 0.5}  # Posisikan di tengah   
+            
+<InstructionScreen>:
+    name: "instruction"
+    BoxLayout:
+        orientation: "vertical"
+        spacing: 5
+        padding: 10
+        canvas.before:
+            Color:
+                rgba: (0.137, 0.514, 0.557, 1)  # Warna latar belakang biru
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        # Header
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: None
+            height: dp(50)
+
+            canvas.after:
+                Color:
+                    rgba: (0, 0, 0, 1)  # Warna hitam untuk garis
+                Line:
+                    width: 1
+                    points: self.x, self.y, self.x + self.width, self.y  # Garis penuh di bawah
+
+            ImageButton:
+                source: "assets/IconBack.png"
+                size_hint_x: None
+                width: dp(50)
+                on_press: root.manager.current = 'main'
+
+            Label:
+                text: "Petunjuk Aplikasi"
+                font_size: "20sp"
+                size_hint_x: 1  
+                halign: "left"
+                valign: "middle"
+                text_size: self.size
+
+
+        # Konten Scrollable
+        ScrollView:
+            size_hint: 1, 1  # Memastikan ScrollView mengambil semua ruang yang tersedia
+            do_scroll_x: False  # Hanya scroll vertikal
+
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height  # Menyesuaikan tinggi sesuai isi
+                spacing: 10
+                padding: 10
+                     
+                Label:
+                    text: "Selamat datang!!\nDi aplikasi keamanan data!\nAplikasi ini dirancang untuk melindungi dokumen Anda melalui enkripsi,\nmemungkinkan dekripsi hanya oleh pengguna yang memiliki kunci rahasia.\nFitur transfer data memudahkan berbagi file terenkripsi secara aman."
+                    font_size: "14sp"
+                    color: (1, 1, 1, 1)
+                    bold: True
+                    halign: "center"
+                    valign: "middle"
+                    text_size: self.width - 40, None
+                    size_hint_y: None
+                    height: self.texture_size[1] + 20  # Menyesuaikan tinggi dengan teks
+
+                # Kotak Menu Enkripsi
+                BoxLayout:
+                    orientation: "horizontal"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    padding: 10
+                    canvas.before:
+                        Color:
+                            rgba: (1, 1, 1, 1)
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [20, 20, 20, 20]
+
+                    Image:
+                        source: "assets/enkripsi.png"
+                        size_hint: None, None
+                        size: dp(30), dp(30)
+                        width:dp(50)
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5} 
+                        allow_stretch: True
+                        keep_ratio: True
+
+                    
+                    Label:
+                        text: "[b]Menu Enkripsi[/b]\n[b]Fungsi:[/b] Mengamankan dokumen Anda dengan algoritma AES-192 dan Metode EoF.\n[b]Cara Menggunakan:[/b]\n- Pilih file dokumen yang akan dienkripsi.\n- pilih file cover untuk penampung dokumen yang akan disisipkan \n-Masukkan kunci rahasia.\n- Klik tombol Enkripsi untuk menghasilkan file terenkripsi.\n-klik tombol unduh jika akan menyimpan file\n-klik tombol transfer jika ingin mengirim file secara instan"
+                        font_size: "12sp"
+                        color: (0, 0, 0, 1)
+                        halign: "left"
+                        valign: "middle"
+                        text_size: self.width - 40, None
+                        size_hint_y: None
+                        height: self.texture_size[1] + 20
+                        markup: True
+
+                # Kotak Menu Dekripsi
+                BoxLayout:
+                    orientation: "horizontal"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    padding: 10
+                    canvas.before:
+                        Color:
+                            rgba: (1, 1, 1, 1)
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [20, 20, 20, 20]
+                    
+                    Image:
+                        source: "assets/dekripsi.png"
+                        size_hint: None, None
+                        size: dp(30), dp(30)
+                        width:dp(50)
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5} 
+                        allow_stretch: True
+                        keep_ratio: True
+
+                    Label:
+                        text: "[b]Menu Dekripsi[/b]\n[b]Fungsi:[/b]Membuka dokumen terenkripsi menggunakan kunci rahasia yang sama.\n[b]Cara Menggunakan:[/b]\n- Pilih file yang terenkripsi.\n- Masukkan kunci rahasia \n- Klik tombol Dekripsi untuk mengembalikan file asli\n-klik tombol unduh untuk menyimpan file yang ter dekripsi"
+                        font_size: "12sp"
+                        color: (0, 0, 0, 1)
+                        halign: "left"
+                        valign: "middle"
+                        text_size: self.width - 40, None
+                        size_hint_y: None
+                        height: self.texture_size[1] + 20
+                        markup: True
+
+                # Kotak Menu Pengirim
+                BoxLayout:
+                    orientation: "horizontal"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    padding: 10
+                    canvas.before:
+                        Color:
+                            rgba: (1, 1, 1, 1)
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [20, 20, 20, 20]
+
+                    Image:
+                        source: "assets/sender.png"
+                        size_hint: None, None
+                        size: dp(40), dp(40)
+                        width:dp(50)
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5} 
+                        allow_stretch: True
+                        keep_ratio: True
+                    Label:
+                        text: "[b]Menu Pengirim[/b]\n[b]Fungsi:[/b]mengirim file yang telah terenkripsi ke penerima\n[b]Cara Menggunakan:[/b]\n- Pilih dokumen enkripsi yang akan dikirim.\n- Masukkan IP Address Penerima.\n- Klik Koneksi.\n- Tunggu sebentar untuk mengkoneksikan dan transfer file bisa dilakukan."
+                        font_size: "12sp"
+                        color: (0, 0, 0, 1)
+                        halign: "left"
+                        valign: "middle"
+                        text_size: self.width - 40, None
+                        size_hint_y: None
+                        height: self.texture_size[1] + 20
+                        markup: True
+
+                # Kotak Menu Penerima
+                BoxLayout:
+                    orientation: "horizontal"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    padding: 10
+                    canvas.before:
+                        Color:
+                            rgba: (1, 1, 1, 1)
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [20, 20, 20, 20]
+
+                    Image:
+                        source: "assets/Penerima.png"
+                        size_hint: None, None
+                        size: dp(40), dp(40)
+                        width:dp(50)
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5} 
+                        allow_stretch: True
+                        keep_ratio: True
+                    Label:
+                        text: "[b]Menu Penerima[/b]\n[b]Fungsi:[/b]menampilkan informasi IP perangkat serta menerima file yang di kirim oleh pengirim.\n[b]Cara Menggunakan:[/b]\n- Pilih menu penerima.\n- klik ikon mata yang berada di pojok kanan atas untuk melihat IP\n- Klik Buka Koneksi.\n- Tunggu Terkoneksi dengan file, dan proses transfer bisa dilakukan."
+                        font_size: "12sp"
+                        color: (0, 0, 0, 1)
+                        halign: "left"
+                        valign: "middle"
+                        text_size: self.width - 40, None
+                        size_hint_y: None
+                        height: self.texture_size[1] + 20
+                        markup: True
+
+<EncryptScreen>:
+    name: "encrypt"
+    BoxLayout:
+        orientation: "vertical"
+        spacing: 10
+        padding: 15
+        canvas.before:
+            Color:
+                rgba: (0.137, 0.514, 0.557, 1)
+            Rectangle:
+                pos: self.pos
+                size:self.size
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: None
+            height: dp(50)
+
+            canvas.after:
+                Color:
+                    rgba: (0, 0, 0, 1)
+                Line:
+                    width: 1
+                    points: self.x, self.y, self.x + self.width, self.y  
+
+            ImageButton:
+                source: "assets/IconBack.png"
+                size_hint_x: None
+                width: dp(50)
+                pos_hint: {"left": 1}  # Menyusun di kiri
+                x: dp(10)  
+                on_press: root.manager.current = 'main'
+
+            Label:
+                text: "Enkripsi"
+                font_size: "20sp"
+                size_hint_x: 1  
+                halign: "left"
+                valign: "middle"
+                text_size: self.size
+
+        #Tombol pilih file dokumen 
+        BoxLayout:
+            size_hint_y:None
+            size_hint_x: 1
+            size: dp(250), dp(100)
+            pos_hint: {"center_x": 0.5}
+            orientation: 'vertical'
+            padding: dp(10)
+
+            canvas.before:
+                Color:
+                    rgba: (1, 1, 1, 1)
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [20, 20, 20, 20]
+
+            BoxLayout:
+                size_hint: (None, None)
+                size: dp(70), dp(40)
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                padding:dp (5)
+
+                Image:
+                    source: "assets/File.png"
+                    size: dp(25), dp(25)
+                    allow_stretch: True
+                    keep_ratio: True
+
+            BoxLayout:
+                size_hint: (None, None)
+                size: dp(100), dp(25)
+                pos_hint: {"center_x": 0.5}
+
+                Button:
+                    text: "Pilih File"
+                    color: (0, 0, 0, 1)
+                    size_hint: (None, None)
+                    size: dp(100), dp(30)
+                    background_normal: ''
+                    background_color: (0.7, 0.7, 0.7, 1) 
+                    on_press: root.select_document()
+
+            BoxLayout:
+                size_hint: (None, None) 
+                size: dp(150), dp(30)
+                pos_hint: {"center_x": 0.5}
+
+                Label:
+                    id: document_label
+                    text: "File: Belum dipilih"
+                    size_hint_x:1
+                    size_hint_y:1
+                    font_size: "14sp"
+                    color: 1 , 0 , 0 , 1
+                    text_size: self.width, None
+                    halign: "center"
+                    valign: "middle"
+                    shorten: True
+                    shorten_from: "right"
+                    height: self.texture_size[1]
+                    ellipsis_options: {'min_length': 10}
+                
+
+
+        Label:
+            text: '*Format file .txt, .docx, .pdf (max 100 Mb)'
+            size_hint_y: None
+            size_hint_x: 1
+            height: dp(15)
+            font_size: "12sp"
+            color: (1, 1, 1, 0.7)
+            halign: "left"
+            valign: "middle"
+            text_size: self.size  # Pastikan teks mengisi area label
+
+
+        #Tombol pilih File Media Penampung
+        BoxLayout:
+            size_hint_y: None
+            size_hint_x: 1
+            size: dp(250), dp(100)
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            orientation: 'vertical'
+
+            canvas.before:
+                Color:
+                    rgba: (1, 1, 1, 1)  # Warna latar belakang putih
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [20, 20, 20, 20]
+
+            #Bagian Icon
+            BoxLayout:
+                size_hint: (None, None)
+                size: dp(70), dp(35)
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                padding:dp (5)
+                
+                Label:
+                    text: "\uf03e  \uf1c7"  # Unicode untuk ikon gambar & musik
+                    font_name: "FontAwesome"
+                    font_size: dp(25)
+                    color: 0, 0, 0, 1
+                    halign: "center"
+                    valign: "middle"
+                    size_hint: (None, None)
+                    size: self.texture_size  # Sesuaikan ukuran dengan teks
+            
+            #bagian tombol Pilih File
+            BoxLayout:
+                size_hint: (None, None)
+                size: dp(100), dp(30)
+                pos_hint: {"center_x": 0.5}
+
+                Button:
+                    text: "Pilih File"
+                    color: (0, 0, 0, 1)
+                    size_hint: (None, None)
+                    size: dp(100), dp(30)
+                    background_normal: ''
+                    background_color: (0.7, 0.7, 0.7, 1)
+                    pos_hint: {"center_x": 0.5}  # Memastikan tombol tetap di tengah
+                    on_press: root.select_media()
+
+            BoxLayout:
+                size_hint: (None, None)
+                size: dp(120), dp(30)
+                pos_hint: {"center_x": 0.5}
+
+                Label:
+                    id: media_label
+                    text: "File: Belum dipilih"
+                    size_hint_x:1
+                    size_hint_y:1
+                    font_size: "14sp"
+                    color: 1 , 0 , 0 , 1
+                    text_size: self.width, None
+                    halign: "center"
+                    valign: "middle"
+                    shorten: True
+                    shorten_from: "right"
+                    height: self.texture_size[1]
+                    ellipsis_options: {'min_length': 10}
+
+        Label:
+            text: '*Format file .jpg, .jpeg, .png .Mp3, .WAV'
+            size_hint_y: None
+            size_hint_x: 1
+            height: dp(20)
+            font_size: "12sp"
+            color: (1, 1, 1, 0.7)
+            halign: "left"
+            valign: "middle"
+            text_size: self.size  # Pastikan teks mengisi area label
+        Widget:
+            size_hint_y:0.05
+
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_y: None
+            height: dp(50)  # Ditinggikan untuk mengakomodasi baris tambahan
+
+
+            Label:
+                text: "Kunci Rahasia:"
+                font_size: "16sp"
+                halign: "left"
+                valign: "middle"
+                width: dp(120)
+                size_hint_x: None
+                text_size: self.size
+
+            BoxLayout:  # Baris untuk TextInput + Tombol Eye
+                orientation: 'horizontal'
+                size_hint_y: None
+                height: dp(30)
+
+                TextInput:
+                    id: secret_key
+                    password: True
+                    multiline: False
+                    size_hint_x: 1
+
+                Button:
+                    text: u"\uf06e"  # Unicode untuk FontAwesome eye
+                    font_name: "FontAwesome"
+                    size_hint: (None, None)
+                    size: dp(50), dp(30)
+                    on_press:
+                        secret_key.password = not secret_key.password
+
+        CustomButton:
+            text: "Enkripsi"
+            size_hint: (None, None)
+            size: dp(250), dp(100)  # Atur ukuran agar tombol berada di tengah
+            pos_hint: {"center_x": 0.5}
+            height: dp (40)
+            on_press: root.encrypt_file()
+            
+        BoxLayout:
+            size_hint_y: None
+            size_hint_x:1
+            size: dp(300), dp(70)
+            pos_hint: {"center_x": 0.5}
+            orientation: 'vertical'
+            padding: dp(10)
+
+            canvas.before:
+                Color:
+                    rgba: (1, 1, 1, 1)
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [20, 20, 20, 20]
+                    
+            Label:
+                id: encrypted_file_label
+                text: root.encrypted_file_path if root.encrypted_file_path else "Belum ada file terenkripsi"
+                font_size: "12sp"
+                color: 1, 0, 0, 1
+                text_size: self.width, self.height  # Batasi teks sesuai lebar box
+                halign: 'center'
+                valign: 'middle'
+
+
+        BoxLayout:
+            size_hint_y: None
+            size_hint: (None, None)
+            size: dp(250), dp(100)  # Atur ukuran agar tombol berada di tengah
+            pos_hint: {"center_x": 0.5}
+            height: dp(25)
+            spacing: 50
+            canvas.before:
+                Color:
+                    rgba: (0.137, 0.514, 0.557, 1)
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius:[20, 20, 20, 20]
+
+            Button:
+                text: "Unduh"
+                color: 0, 0, 0, 1
+                background_normal: ''
+                background_color: (0.7, 0.7, 0.7, 1)
+                on_press: root.download_encrypted_file()
+
+            Button:
+                text: "Transfer"
+                color: 0, 0, 0, 1
+                background_normal: ''
+                background_color: (0.7, 0.7, 0.7, 1)
+                on_press: root.transfer_file()
+        Widget:
+            size_hint_y:0.1
+
+
+<DecryptScreen>:
+    name: "decrypt"
+    BoxLayout:
+        orientation: "vertical"
+        spacing: 20
+        padding: 10
+        canvas.before:
+            Color:
+                rgba: (0.137, 0.514, 0.557, 1)
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        # Bagian Header dengan Garis Bawah
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: None
+            height: dp(50)
+
+            canvas.after:
+                Color:
+                    rgba: (0, 0, 0, 1)  # Warna hitam untuk garis
+                Line:
+                    width: 1
+                    points: self.x, self.y, self.x + self.width, self.y  # Garis penuh di bawah
+
+            ImageButton:
+                source: "assets/IconBack.png"
+                size_hint_x: None
+                width: dp(50)
+                on_press: root.manager.current = 'main'
+
+            Label:
+                text: "Dekripsi"
+                font_size: "20sp"
+                size_hint_x: 1  
+                halign: "left"
+                valign: "middle"
+                text_size: self.size
+        
+
+        # Box Utama untuk Pilih File
+        BoxLayout:
+            orientation: 'vertical'
+            height: dp(120)
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            spacing: 0
+            
+            canvas.before:
+                Color:
+                    rgba: (1, 1, 1, 1)  # Warna latar belakang putih
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [20, 20, 20, 20]
+
+            #Bagian Icon
+            BoxLayout:
+                size_hint: (None, None)
+                size: dp(80), dp(40)
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                
+                
+                Label:
+                    text: "\uf03e  \uf1c7"  # Unicode untuk ikon gambar & musik
+                    font_name: "FontAwesome"
+                    font_size: dp(30)
+                    color: 0, 0, 0, 1
+                    halign: "center"
+                    valign: "middle"
+                    size_hint: (None, None)
+                    size: self.texture_size  # Sesuaikan ukuran dengan teks
+            
+            #bagian tombol Pilih File
+            BoxLayout:
+                size_hint: (None, None)
+                size: dp(100), dp(40)
+                pos_hint: {"center_x": 0.5}
+
+                Button:
+                    text: "Pilih File"
+                    color: (0, 0, 0, 1)
+                    size_hint: (None, None)
+                    size: dp(100), dp(30)
+                    background_normal: ''
+                    background_color: (0.7, 0.7, 0.7, 1)
+                    pos_hint: {"center_x": 0.5}  # Memastikan tombol tetap di tengah
+                    on_press: root.select_media()
+
+            BoxLayout:
+                size_hint: (None, None)
+                size: dp(120), dp(40)
+                pos_hint: {"center_x": 0.5}
+
+                Label:
+                    id: dekripsi_label
+                    text: "File: Belum dipilih"
+                    size_hint_x:1
+                    size_hint_y:1
+                    font_size: "14sp"
+                    color: 1 , 0 , 0 , 1
+                    text_size: self.width, None
+                    halign: "center"
+                    valign: "middle"
+                    shorten: True
+                    shorten_from: "right"
+                    height: self.texture_size[1]
+                    ellipsis_options: {'min_length': 10}
+        Widget:
+            size_hint_y: 0.05
+
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_y: None
+            height: dp(50)  # Ditinggikan untuk mengakomodasi baris tambahan
+
+            Label:
+                text: "Kunci Rahasia:"
+                font_size: "16sp"
+                halign: "left"
+                valign: "middle"
+                width: dp(120)
+                size_hint_x: None
+                text_size: self.size
+
+            BoxLayout:  # Baris untuk TextInput + Tombol Eye
+                orientation: 'horizontal'
+                size_hint_y: None
+                height: dp(30)
+
+                TextInput:
+                    id: secret_key
+                    password: True
+                    multiline: False
+                    size_hint_x: 1
+
+                Button:
+                    text: u"\uf06e"  # Unicode untuk FontAwesome eye
+                    font_name: "FontAwesome"
+                    size_hint: (None, None)
+                    size: dp(50), dp(30)
+                    on_press:
+                        secret_key.password = not secret_key.password
+        
+
+        Widget:
+            size_hint_y: 0.1
+
+        CustomButton:
+            text: "Dekripsi"
+            bold: True
+            size: dp(250), dp(40)
+            size_hint: (None, None)
+            pos_hint: {"center_x": 0.5}
+            on_press: root.decrypt_file()  
+
+        BoxLayout:
+            orientation: 'vertical'
+            height: dp(80)
+            spacing: 0
+            padding: 0
+            Label:
+                text: "Hasil Dekripsi:"
+                font_size: "16sp"
+                halign: "left"
+                valign: "middle"
+                width: dp(120)
+                size_hint_x: None  # Menghindari perubahan ukuran otomatis
+                text_size: self.size 
+            
+            BoxLayout:
+                height: dp (60)
+                pos_hint: {"center_x": 0.5}
+                orientation: 'vertical'
+
+                canvas.before:
+                    Color:
+                        rgba: (1, 1, 1, 1)
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [10, 10, 10, 10]        
+                Label:
+                    id: decrypt_file_label
+                    text: root.decrypted_file_path if root.decrypted_file_path else "Belum ada file terdekripsi"
+                    font_size: "12sp"
+                    color: 1, 0, 0, 1
+                    text_size: self.width, self.height  
+                    halign: "center"
+                    valign: "middle"
+
+        BoxLayout:
+            size_hint_y: None
+            size_hint: (None, None)
+            size: dp(150), dp(100)  # Atur ukuran agar tombol berada di tengah
+            pos_hint: {"center_x": 0.5}
+            height: dp(25)
+            canvas.before:
+                Color:
+                    rgba: (0.137, 0.514, 0.557, 1)
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius:[25, 25, 25, 25]
+
+            Button:
+                text: "Unduh"
+                size: dp(80), dp(30)
+                color: 0, 0, 0, 1
+                background_normal: ''
+                background_color: (0.7, 0.7, 0.7, 1)
+                on_press: root.download_decrypted_file()
+                
+        Widget:
+            size_hint_y: 0.2
+
+<TransferScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: dp(10)
+        padding: dp(0), dp(30), dp(0), dp(0) 
+        canvas.before:
+            Color:
+                rgba: (0.137, 0.514, 0.557, 1)
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        Label:
+            text: "Transfer File"
+            font_size: "20sp"
+            size_hint_y: 0.1
+            height: dp(40)
+            canvas.after:
+                Color:
+                    rgba: (0, 0, 0, 1)  # Warna hitam
+                Line:
+                    width: 1   # Ketebalan garis
+                    points: self.x, self.y, self.x + self.width, self.y  # Garis di bawah label
+
+
+        Widget:  # Spacer untuk mendorong tombol ke atas
+            size_hint_y: 0.4  # Sesuaikan tinggi spacer agar tombol naik ke atas
+
+        BoxLayout:
+            orientation: "horizontal"
+            pos_hint: {"center_x": 0.5}
+            size: dp(250), dp(70)
+            size_hint: None, None
+            padding: dp (10)
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 1
+                RoundedRectangle:
+                    pos:self.pos
+                    size:self.size
+                    radius: [20, 20, 20, 20 ]
+                
+            Image:
+                source: "assets/sender.png"
+                size_hint: None, None
+                size: dp(40), dp(40)
+                width:dp(50)
+                pos_hint: {"center_x": 0.5, "center_y": 0.5} 
+                allow_stretch: True
+                keep_ratio: True
+
+            CustomButton:
+                text: "Pengirim"
+                font_size: "20sp"
+                halign: "center"
+                height: dp(30)
+                width:dp(160)
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}  # Tambahkan center_y agar berada di tengah layar
+                size_hint_x: None
+                on_press: root.manager.current = 'sender'
+
+        BoxLayout:
+            orientation: "horizontal"
+            pos_hint: {"center_x": 0.5}
+            size: dp(250), dp(70)
+            size_hint: None, None
+            padding: dp (10)
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 1
+                RoundedRectangle:
+                    pos:self.pos
+                    size:self.size
+                    radius: [20, 20, 20, 20 ]
+                
+            Image:
+                source: "assets/Penerima.png"
+                size_hint: None, None
+                size: dp(35), dp(35)
+                width:dp(50)
+                pos_hint: {"center_x": 0.5, "center_y": 0.5} 
+                allow_stretch: True
+                keep_ratio: True
+
+            CustomButton:
+                text: "Penerima"
+                font_size: "20sp"
+                halign: "center"
+                height: dp(30)
+                width:dp(160)
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}  # Tambahkan center_y agar berada di tengah layar
+                size_hint_x: None
+                on_press: root.manager.current = 'receiver'
+                
+                
+
+        Widget:  # Spacer tambahan agar navbar tidak terlalu dekat ke tombol
+            size_hint_y: 0.4
+
+        # Navbar Bawah
+        BoxLayout:
+            size_hint_y: None
+            height: dp(70)
+            pos_hint: {"x": 0, "bottom": 1}  # Navbar tetap di bawah
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [30, 30, 0, 0]
+            # Bagian Home (Ikon + Button)
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_x: 0.5  # Lebar mengikuti ukuran elemen
+                spacing: dp(5)  # Jarak antar widget
+                pos_hint: {"center_y": 0.5}  # Posisikan di tengah navbar
+
+                canvas.before:
+                    Color:
+                        rgba: 1, 1, 1, 1  # Warna merah untuk background ikon dan tombol
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [30, 30, 30, 30]
+                    
+
+                ImageButton:
+                    source: "assets/IconHome.png"
+                    size_hint: None, None
+                    size: dp(25), dp(25)
+                    allow_stretch: True
+                    keep_ratio: True
+                    pos_hint: {"center_x": 0.5}  # Menengahkan ikon dalam BoxLayout
+                    on_press: root.manager.current = 'main'
+                Label:
+                    text: "Home"
+                    font_size:"14sp"
+                    color: 0, 0 , 0 , 1
+                    size_hint: None, None
+                    size: dp(80), dp(20)  # Sesuaikan ukuran tombol
+                    pos_hint: {"center_x": 0.5}  # Posisikan di tengah
+                    
+
+        # Bagian Transfer (Ikon + Button)
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_x: 0.5 # Lebar mengikuti ukuran elemen
+                spacing: dp(5)  # Jarak antar widget
+                pos_hint: {"center_y": 0.5}  # Posisikan di tengah navbar
+
+                canvas.before:
+                    Color:
+                        rgba: 1, 1, 1, 1  # Warna merah untuk background ikon dan tombol
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [30, 30, 30, 30]
+
+                ImageButton:
+                    source: "assets/transfer.png"
+                    size_hint: None, None
+                    size: dp(25), dp(25)
+                    allow_stretch: True
+                    keep_ratio: True
+                    pos_hint: {"center_x": 0.5}  # Menengahkan ikon dalam BoxLayout
+                    on_press: root.manager.current = 'transfer'
+
+                Label:
+                    text: "Transfer"
+                    font_size:"14sp"
+                    color: 0 , 0 , 0 , 1
+                    size_hint: None, None
+                    size: dp(80), dp(20)  # Sesuaikan ukuran tombol
+                    pos_hint: {"center_x": 0.5}  # Posisikan di tengah
+
+<SenderScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        spacing: 10
+        padding: 20
+        canvas.before:
+            Color:
+                rgba: (0.137, 0.514, 0.557, 1)
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        #Header
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: None
+            height: dp(50)
+
+            canvas.after:
+                Color:
+                    rgba: (0, 0, 0, 1)  # Warna hitam untuk garis
+                Line:
+                    width: 1
+                    points: self.x, self.y, self.x + self.width, self.y  # Garis penuh di bawah
+
+            ImageButton:
+                source: "assets/IconBack.png"
+                size_hint_x: None
+                width: dp(50)
+                on_press: root.manager.current = 'transfer'
+
+            Label:
+                text: "Pengirim"
+                font_size: "20sp"
+                size_hint_x: 1  
+                halign: "left"
+                valign: "middle"
+                text_size: self.size
+
+        
+        #tombol pilih File
+        BoxLayout:
+            size_hint_y: None
+            size_hint_x: 1
+            size: dp(300), dp(120)
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            orientation: 'vertical'
+            canvas.before:
+                Color:
+                    rgba: (1, 1, 1, 1)  # Warna latar belakang putih
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [20, 20, 20, 20]
+
+            # Bagian Icon
+            BoxLayout:
+                size_hint: (None, None)
+                size: dp(70), dp(30)
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                padding:dp (5)
+                
+                Label:
+                    text: "\uf03e  \uf1c7"  # Unicode untuk ikon gambar & musik
+                    font_name: "FontAwesome"
+                    font_size: dp(25)
+                    color: 0, 0, 0, 1
+                    halign: "center"
+                    valign: "middle"
+                    size_hint: (None, None)
+                    size: self.texture_size  # Sesuaikan ukuran dengan teks
+            
+            #bagian tombol Pilih File
+            BoxLayout:
+                size_hint: (None, None)
+                size: dp(100), dp(30)
+                pos_hint: {"center_x": 0.5}
+
+                Button:
+                    text: "Pilih File"
+                    color: (0, 0, 0, 1)
+                    size_hint: (None, None)
+                    size: dp(100), dp(30)
+                    background_normal: ''
+                    background_color: (0.7, 0.7, 0.7, 1)
+                    pos_hint: {"center_x": 0.5}  # Memastikan tombol tetap di tengah
+                    on_press: root.select_file()
+
+            BoxLayout:
+                size_hint: (None, None)
+                size: dp(120), dp(40)
+                pos_hint: {"center_x": 0.5}
+                Label:
+                    id: file_sender_label
+                    text: "File: Belum dipilih"
+                    text: "File: Belum dipilih"
+                    size_hint_x:1
+                    size_hint_y:1
+                    font_size: "14sp"
+                    color: 1 , 0 , 0 , 1
+                    text_size: self.width, None
+                    halign: "center"
+                    valign: "middle"
+                    shorten: True
+                    shorten_from: "right"
+                    height: self.texture_size[1]
+                    ellipsis_options: {'min_length': 10}
+
+        Widget:
+            size_hint_y:0.1
+
+        BoxLayout:
+            orientation: "vertical"
+            size_hint_y: None
+            height: dp (70)
+            spacing: 1
+            padding: 0
+            Label:
+                text: "Inputkan IP Address:"
+                font_size: "16sp"
+                halign: "left"
+                valign: "middle"
+                text_size: self.size
+                height: dp(20)
+                
+
+            TextInput:
+                id: ip_input
+                hint_text: ""
+                multiline: False
+                size_hint_y: None
+                height: 33
+        
+            Label:
+                text: "Contoh: 192.168.1.255"
+                color: 1 , 1 , 1 , 0.6
+                font_size: "14sp"
+                halign: "left"
+                valign: "middle"
+                text_size: self.size
+                height: dp (15)
+
+        Widget:
+            size_hint_y:0.1
+            
+        CustomButton:
+            text: "Kirim File"
+            on_press: root.send_file()
+
+        Label:
+            id: status_label
+            text: ""
+            font_size: "14sp"
+            color: 1, 1, 1, 1
+
+<ReceiverScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        spacing: 10
+        padding: 20
+        canvas.before:
+            Color:
+                rgba: (0.137, 0.514, 0.557, 1)
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        # Header
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: None
+            height: dp(50)
+
+            canvas.after:
+                Color:
+                    rgba: (0, 0, 0, 1)  # Warna hitam untuk garis
+                Line:
+                    width: 1
+                    points: self.x, self.y, self.x + self.width, self.y  # Garis penuh di bawah
+
+            ImageButton:
+                source: "assets/IconBack.png"
+                size_hint_x: None
+                width: dp(50)
+                on_press: root.manager.current = 'transfer'
+
+            Label:
+                text: "Penerima"
+                font_size: "20sp"
+                size_hint_x: 1  
+                halign: "left"
+                valign: "middle"
+                text_size: self.size
+        
+        BoxLayout:
+            orientation: "vertical"
+            size_hint_y: None
+            height: dp(70)
+
+            Label:
+                text: "IP Address Pengguna:"
+                font_size: "14sp" 
+                halign: "left"
+                valign: "middle"
+                text_size: self.size
+            # Kotak Informasi IP
+            BoxLayout:
+                size_hint_y: None
+                height: dp(50)
+                pos_hint: {"center_x": 0.5}
+                spacing: dp(10)  # Jarak antara ikon dan label
+                padding: dp(10)
+
+                canvas.before:
+                    Color:
+                        rgba: (0.75, 0.71, 0.71, 1)  # Warna latar belakang
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+
+                Label:
+                    text: '\uf2bd'
+                    font_name: "FontAwesome"
+                    font_size: "20sp"
+                    color: 0, 0, 0, 1
+                    size_hint_x: None  # Supaya ukurannya tetap
+                    width: dp(30)  # Tentukan lebar agar tidak melebar
+                    halign: "left"
+                    valign: "middle"
+                    text_size: self.size
+
+                Label:
+                    id: ip_label
+                    text: "IP: "
+                    font_name:"FontText"
+                    font_size: "16sp"
+                    color: 0, 0, 0, 1  
+                    halign: "left"  # Rata kiri
+                    valign: "middle"  
+                    text_size: self.size
+                    size_hint_x: 1  # Memanfaatkan sisa ruang dengan baik
+                    padding_x: dp(10)  # Jarak teks dari kiri
+
+                Button:
+                    text: "eye"
+                    font_name: "FontAwesome"
+                    size_hint: (None, None)
+                    pos_hint:{"right": 1}
+                    size: dp(50), dp(25)  # Ukuran tombol lebih proporsional
+                    pos_hint: {"center_y": 0.5}  # Pastikan tombol sejajar di tengah
+                    on_press: root.get_ip_address()
+ 
+        Widget:
+            size_hint_y: 1 
+
+        # Box untuk tombol-tombol
+        CustomButton:
+            text: "Buka Koneksi"
+            on_press: root.start_server()
+
+        Widget:
+            size_hint_y: 0.3
+
+        BoxLayout:
+            size_hint_y: None
+            size_hint_x:1
+            size: dp(300), dp(100)
+            pos_hint: {"center_x": 0.5}
+            orientation: 'vertical'
+            padding: dp(10)
+
+            canvas.before:
+                Color:
+                    rgba: (1, 1, 1, 1)
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [20, 20, 20, 20]
+                    
+            Label:
+                id: receiver_file_label
+                text: root.receiver_file_path if root.receiver_file_path else "Belum ada file diterima"
+                font_size: "14sp"
+                color: 1, 0, 0, 1
+                text_size: self.width, self.height  # Batasi teks sesuai lebar box
+                halign: 'center'
+                valign: 'middle'
+
+
+        BoxLayout:
+            size_hint_y: None
+            size_hint: (None, None)
+            size: dp(250), dp(100)  # Atur ukuran agar tombol berada di tengah
+            pos_hint: {"center_x": 0.5}
+            height: dp(25)
+            canvas.before:
+                Color:
+                    rgba: (0.137, 0.514, 0.557, 1)
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius:[20, 20, 20, 20]
+
+            Button:
+                text: "Unduh"
+                color: 0, 0, 0, 1
+                background_normal: ''
+                background_color: (0.7, 0.7, 0.7, 1)
+                on_press: root.download_File_Diterima()
+
+        Widget:
+            size_hint_y: 1 
